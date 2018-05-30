@@ -26,7 +26,7 @@ def system(cmd):
     return os.system(cmd)
 
 if __name__ == '__main__':
-    config = json.loads(open('project_config.json'))
+    config = json.loads(open('project_config.json').read())
     system(f'django-admin startproject {config["project_name"]}')
     project_root = Path(config['project_name'])
     manage_py = project_root / 'manage.py'
