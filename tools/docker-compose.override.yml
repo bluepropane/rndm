@@ -2,14 +2,15 @@ version: '3'
 
 services:
   db:
-    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
 
   server:
     volumes:
-      - .:/usr/src/app
-    command: python manage.py runserver 8000
+      - {config.server_dir}:/usr/src/app
+    command: python manage.py runserver 0.0.0.0:8000
 
   web:
     volumes:
-      - .:/usr/src/app
+      - {config.web_dir}:/usr/src/app
     command: npm start

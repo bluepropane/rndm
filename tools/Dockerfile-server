@@ -1,3 +1,2 @@
 FROM python:3-onbuild
-ENTRYPOINT ["/bin/bash", "-c"]
 EXPOSE 8000

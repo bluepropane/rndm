@@ -53,7 +53,6 @@ urlpatterns = [
 
 # Start Gunicorn processes
 echo Starting Gunicorn.
-cd {self.config['project_name']}
 exec gunicorn {self.config['project_name']}.wsgi:application \\
     --bind 0.0.0.0:8000 \\
     --workers 4
@@ -88,8 +87,8 @@ exec gunicorn {self.config['project_name']}.wsgi:application \\
         system('npm run eject')
 
     def copy_docker_files(self):
-        # system(f'cp {self.tools_dir / "Dockerfile-web"} {self.web_dir / "Dockerfile"}')
-        # system(f'cp {self.tools_dir / "Dockerfile-server"} {self.server_dir / "Dockerfile"}')
+        system(f'cp {self.tools_dir / "Dockerfile-web"} {self.web_dir / "Dockerfile"}')
+        system(f'cp {self.tools_dir / "Dockerfile-server"} {self.server_dir / "Dockerfile"}')
         for file_type in ('', '.override', '.production'):
             print(f'====> copying docker-compose{file_type}.yml')
             compose_file = (self.tools_dir / f'docker-compose{file_type}.yml')
