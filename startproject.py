@@ -23,7 +23,7 @@ def create_templates_dir(app_dir):
 
 def system(cmd):
     print('====>', cmd)
-    os.system(cmd)
+    return os.system(cmd)
 
 if __name__ == '__main__':
     config = json.loads(open('project_config.json'))
