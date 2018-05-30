@@ -8,15 +8,23 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: rootpassword
   server:
-    build: .
+    build:
+      context: {config.server_dir}
     entrypoint: /bin/bash -c
-    command: "/usr/src/app/start.sh"
     ports:
       - "8000:8000"
     depends_on:
       - db
+    image: python:3-onbuild
     environment:
       DB_USER: djangoadmin
       DB_PASSWORD: password
   web:
-    image: 8.11.2-onbuild
+    build:
+      context: {config.web_dir}
+    entrypoint: /bin/bash -c
+    image: node:8.11.2-onbuild
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server

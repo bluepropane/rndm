@@ -1,4 +1,8 @@
-db:
-  restart: always
-server:
-  restart: always
+version: '3'
+
+services:
+  db:
+    restart: always
+  server:
+    restart: always
+    command: . /usr/src/app/start.sh

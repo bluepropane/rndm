@@ -1,6 +1,15 @@
-db:
-  MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+version: '3'
 
-server:
-  volumes:
-    - .:/usr/src/app
+services:
+  db:
+    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
+  server:
+    volumes:
+      - .:/usr/src/app
+    command: python manage.py runserver 8000
+
+  web:
+    volumes:
+      - .:/usr/src/app
+    command: npm start

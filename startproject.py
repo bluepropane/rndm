@@ -46,7 +46,7 @@ urlpatterns = [
         templates_dir.mkdir()
         (templates_dir / app_dir.name).mkdir()
 
-    def create_docker_scripts(self):
+    def create_startup_scripts(self):
         print('====> Creating docker scripts')
         start_sh_content = f"""
 #!/bin/bash
@@ -58,7 +58,7 @@ exec gunicorn {self.config['project_name']}.wsgi:application \\
     --bind 0.0.0.0:8000 \\
     --workers 4
 """
-        start_sh = self.src_dir / 'start.sh'
+        start_sh = self.server_dir / 'start.sh'
         start_sh.touch(mode=0o766, exist_ok=True)
         start_sh.write_text(start_sh_content)
 
@@ -80,19 +80,27 @@ exec gunicorn {self.config['project_name']}.wsgi:application \\
     def create_django_project(self):
         os.chdir(self.src_dir)
         system(f'django-admin startproject {self.config["project_name"]}')
+        system(f'cp {self.root_dir / "requirements.txt"} {self.server_dir}')
+        self.create_app_dirs()
 
     def eject_react_app(self):
         os.chdir(self.web_dir)
         system('npm run eject')
 
     def copy_docker_files(self):
-        system(f'cp {self.tools_dir / "Dockerfile-web"} {self.web_dir / "Dockerfile"}')
-        system(f'cp {self.tools_dir}/docker-compose*yml {self.src_dir}')
+        # system(f'cp {self.tools_dir / "Dockerfile-web"} {self.web_dir / "Dockerfile"}')
+        # system(f'cp {self.tools_dir / "Dockerfile-server"} {self.server_dir / "Dockerfile"}')
+        for file_type in ('', '.override', '.production'):
+            print(f'====> copying docker-compose{file_type}.yml')
+            compose_file = (self.tools_dir / f'docker-compose{file_type}.yml')
+            content = compose_file.open().read().format(**{'config': self})
+            target_file = self.src_dir / compose_file.name
+            target_file.touch()
+            target_file.write_text(content)
 
     def run(self):
         self.create_django_project()
-        self.create_app_dirs()
-        self.create_docker_scripts()
+        self.create_startup_scripts()
         self.create_react_app()
         self.copy_docker_files()
         # self.eject_react_app()
