@@ -4,9 +4,6 @@ import os
 import json
 
 
-python = Path(sys.executable).absolute()
-pythonpath = python.parent
-
 def create_urls_py(app_dir):
     content = """from django.urls import path
 
@@ -30,10 +27,11 @@ def system(cmd):
 
 if __name__ == '__main__':
     config = json.loads(open('project_config.json').read())
-    system(f'{pythonpath / 'django-admin'} startproject {config["project_name"]}')
+    system(f'django-admin startproject {config["project_name"]}')
     project_root = Path(config['project_name']).absolute()
     os.chdir(project_root)
+    print('====> cd to', os.getcwd())
     for app in config['apps']:
-        system(f'{python} manage_py startapp {app["name"]}')
+        system(f'python manage.py startapp {app["name"]}')
         app_root = project_root / app['name']
         create_urls_py(app_root)
