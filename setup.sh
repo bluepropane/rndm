@@ -1,4 +1,4 @@
 python3 -m venv venv
-. venv/bin/activate
 
-python startproject.py
+venv/bin/pip install -r requirements.txt
+venv/bin/python startproject.py

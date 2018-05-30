@@ -2,10 +2,10 @@
 django 2 server boilerplate that is ready to be deployed to a docker container with python 3.6.
 
 - production web server on gunicorn 
-- MySQL backend (ready to deploy with docker-compose)
+- MySQL db (ready to deploy with docker-compose)
 - python 3 only
 - you define the project structure you want before the boilerplate is created, using a JSON config file (see `project_config.json`)
-- virtualenv for development
+- `virtualenv` for development
 
 # Usage
 Clone this repo then run `start.sh`:
@@ -24,6 +24,6 @@ docker run -t <desired image name>
 # Starting a production server with docker-compose
 Assumes you have docker-compose cli installed on your machine.
 To initialize a production web server using docker-compose, run
-`
+```
 docker-compose up
-`
+```
