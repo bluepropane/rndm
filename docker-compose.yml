@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER: djangoadmin
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    restart: always
+  world2jam:
+    build: .
+    entrypoint: /bin/bash -c
+    command: "/usr/src/app/start.sh"
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_USER: djangoadmin
+      DB_PASSWORD: password
+    # restart: always
