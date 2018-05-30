@@ -1,0 +1,4 @@
+db:
+  restart: always
+server:
+  restart: always

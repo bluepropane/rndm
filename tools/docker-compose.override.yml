@@ -1,0 +1,6 @@
+db:
+  MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
+server:
+  volumes:
+    - .:/usr/src/app

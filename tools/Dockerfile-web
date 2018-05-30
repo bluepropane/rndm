@@ -1,0 +1,4 @@
+FROM node:8.11.2-onbuild
+ENTRYPOINT ["/bin/bash", "-c"]
+EXPOSE 3000
+

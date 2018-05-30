@@ -1,0 +1,5 @@
+FROM node:8.11.2
+ENTRYPOINT ["/bin/bash", "-c"]
+RUN npm install -g create-react-app
+CMD ["create-react-app cra"]
+
