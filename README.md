@@ -1,29 +1,33 @@
-# DRMN: Django-React-Mysql-Nginx boilerplate
-django 2 server boilerplate that is ready to be deployed to a docker container with python 3.6.
+# RNDM: React-Nginx-Django-Mysql boilerplate
+Full-fledged Web 2.0 Single Page App boilerplate that is ready to be deployed as a containerized docker service
 
+- continuous development using mounted volumes in docker containers
 - production web server on gunicorn 
 - MySQL db (ready to deploy with docker-compose)
-- python 3 only
+- tested on python 3.6
 - you define the project structure you want before the boilerplate is created, using a JSON config file (see `project_config.json`)
 - `virtualenv` for development
 
 # Usage
-Clone this repo then run `start.sh`:
+Clone this repo then run `setup.sh`:
 ```
-git clone git@github.com:bluepropane/DRMN-boilerplate.git && cd DRMN-boilerplate 
-./start.sh
-```
-
-# Building for docker
-Assumes you have docker cli installed on your machine.
-```
-docker build -t <desired image name> .
-docker run -t <desired image name>
+git clone git@github.com:bluepropane/RNDM-boilerplate.git && cd RNDM-boilerplate 
+./setup.sh
 ```
 
-# Starting a production server with docker-compose
-Assumes you have docker-compose cli installed on your machine.
-To initialize a production web server using docker-compose, run
+# Running the service
+This section assumes you have docker-compose cli installed on your machine.
+
+## Starting the development environment
 ```
 docker-compose up
 ```
+Then, fire up your browser and navigate to `localhost`.
+By default, the nginx service binds the react dev server on port 3000 and the django dev server on port 8000. 
+
+## Starting a production server with docker-compose
+To initialize a production web server using docker-compose, run
+```
+docker-compose up -f docker-compose.yml -f docker-compose.production.yml
+```
+in the generated output `src` folder.

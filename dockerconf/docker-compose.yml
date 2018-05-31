@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:8000"
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: djangoadmin
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+  server:
+    build:
+      context: {conf.SERVER}
+      dockerfile: Dockerfile
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    image: {conf.PROJECT_NAME}_server
+    environment:
+      DB_USER: djangoadmin
+      DB_PASSWORD: password
+  web:
+    build:
+      context: {conf.WEB}
+      dockerfile: Dockerfile
+    image: {conf.PROJECT_NAME}_web
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    depends_on:
+      - server

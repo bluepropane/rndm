@@ -1,6 +1,10 @@
 version: '3'
 
 services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8000:8000"
   db:
     image: mysql:5.7
     environment:
@@ -9,19 +13,21 @@ services:
       MYSQL_ROOT_PASSWORD: rootpassword
   server:
     build:
-      context: {config.server_dir}
+      context: {conf.SERVER}
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     depends_on:
       - db
-    image: python:3-onbuild
+    image: src_server
     environment:
       DB_USER: djangoadmin
       DB_PASSWORD: password
   web:
     build:
-      context: {config.web_dir}
-    image: node:8.11.2-onbuild
+      context: {conf.WEB}
+      dockerfile: Dockerfile
+    image: src_web
     ports:
       - "3000:3000"
     depends_on:

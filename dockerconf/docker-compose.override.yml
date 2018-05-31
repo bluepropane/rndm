@@ -1,0 +1,26 @@
+# compose development configuration
+
+version: '3'
+
+services:
+  nginx:
+    volumes:
+      - ./conf/nginx:/etc/nginx/conf.d
+    depends_on:
+      - web
+      - server
+  db:
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
+  server:
+    container_name: {conf.PROJECT_NAME}_dev_server
+    volumes:
+      - {conf.SERVER}:/usr/src/app
+    command: python manage.py runserver 0.0.0.0:8000
+
+  web:
+    container_name: {conf.PROJECT_NAME}_dev_web
+    volumes:
+      - {conf.WEB}:/usr/src/app
+    command: npm start

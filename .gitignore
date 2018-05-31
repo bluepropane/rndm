@@ -1,4 +1,6 @@
+# RNDM-specific 
 venv/
+src/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
