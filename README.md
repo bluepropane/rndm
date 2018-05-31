@@ -18,14 +18,14 @@ git clone git@github.com:bluepropane/RNDM-boilerplate.git && cd RNDM-boilerplate
 # Running the service
 This section assumes you have docker-compose cli installed on your machine.
 
-## Starting the development environment
+### Starting the development environment
 ```
 docker-compose up
 ```
 Then, fire up your browser and navigate to `localhost`.
 By default, the nginx service binds the react dev server on port 3000 and the django dev server on port 8000. 
 
-## Starting a production server with docker-compose
+### Starting a production server with docker-compose
 To initialize a production web server using docker-compose, run
 ```
 docker-compose up -f docker-compose.yml -f docker-compose.production.yml

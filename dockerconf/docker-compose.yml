@@ -15,7 +15,7 @@ services:
     build:
       context: {conf.SERVER}
       dockerfile: Dockerfile
-    expose:
+    expose: 
       - "8000"
     depends_on:
       - db
@@ -23,14 +23,3 @@ services:
     environment:
       DB_USER: djangoadmin
       DB_PASSWORD: password
-  web:
-    build:
-      context: {conf.WEB}
-      dockerfile: Dockerfile
-    image: {conf.PROJECT_NAME}_web
-    ports:
-      - "3000:3000"
-    expose:
-      - "3000"
-    depends_on:
-      - server

@@ -18,9 +18,20 @@ services:
     volumes:
       - {conf.SERVER}:/usr/src/app
     command: python manage.py runserver 0.0.0.0:8000
-
+    tty: true
+    stdin_open: true
   web:
     container_name: {conf.PROJECT_NAME}_dev_web
     volumes:
       - {conf.WEB}:/usr/src/app
     command: npm start
+    build:
+      context: {conf.WEB}
+      dockerfile: Dockerfile
+    image: {conf.PROJECT_NAME}_web
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    depends_on:
+      - server

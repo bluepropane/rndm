@@ -18,7 +18,7 @@ class FileFormatter(object):
 
 class ProjectStarter(object):
     """docstring for ProjectStarter"""
-    def __init__(self, target_path, rollback=True):
+    def __init__(self, target_path='src', rollback=True):
         super(ProjectStarter, self).__init__()
         self.dir = {'src': Path(target_path).absolute()}
         self.config = {}
@@ -148,6 +148,6 @@ if __name__ == '__main__':
     # if len(sys.argv) < 2:
     #     print(f'Usage: python {sys.argv[0]} <target folder>')
     #     exit(1)
-    ps = ProjectStarter('src', rollback=False)
+    ps = ProjectStarter(sys.argv[1], rollback=False)
     ps.run()
     print ('\n' * 3, 'Success!', '\n' * 4)
