@@ -1,21 +1,32 @@
 # RNDM: React-Nginx-Django-Mysql boilerplate
-Full-fledged Web 2.0 Single Page App boilerplate that is ready to be deployed as a containerized docker service
+Full-fledged Web 2.0 Single Page App boilerplate that is ready to be deployed as a containerized docker application
 
 - continuous development using mounted volumes in docker containers
 - production web server on gunicorn 
 - MySQL db (ready to deploy with docker-compose)
-- tested on python 3.6
-- you define the project structure you want before the boilerplate is created, using a JSON config file (see `project_config.json`)
+- python 3.6/django 2.0
+- you define the project structure you want before the boilerplate is created, using a JSON config file (see `rndm_conf.json`)
 - `virtualenv` for development
 
-# Usage
+## Requirements
+RNDM has been tested on the following setup:
+- Docker ^18.03
+- docker-compose ^1.12.1
+
+The following are optional; having them would increase development efficiency
+- Python 3.6, pip 9.0.1
+- Node.js >= 7, npm >= 5
+
+Server instance requirements 
+
+## Usage
 Clone this repo then run `setup.sh`:
 ```
 git clone git@github.com:bluepropane/RNDM-boilerplate.git && cd RNDM-boilerplate 
 ./setup.sh
 ```
 
-# Running the service
+## Running the service
 This section assumes you have docker-compose cli installed on your machine.
 
 ### Starting the development environment
@@ -23,7 +34,15 @@ This section assumes you have docker-compose cli installed on your machine.
 docker-compose up
 ```
 Then, fire up your browser and navigate to `localhost`.
-By default, the nginx service binds the react dev server on port 3000 and the django dev server on port 8000. 
+By default, the nginx service binds the react dev server on port 3000 and the django dev server on port 8000.
+
+In the development environment, there should be 4 services running:
+- `nginx`
+- `web`
+- `server`
+- `db`
+The `web` service runs the webpack development server so that hot reloading is enabled.
+
 
 ### Starting a production server with docker-compose
 To initialize a production web server using docker-compose, run
@@ -31,3 +50,8 @@ To initialize a production web server using docker-compose, run
 docker-compose up -f docker-compose.yml -f docker-compose.production.yml
 ```
 in the generated output `src` folder.
+
+In the production environment, the `web` service is not required as the frontend code is bundled in a build and placed in the server image. Services running:
+- `nginx`
+- `server`
+- `db`

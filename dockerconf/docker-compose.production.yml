@@ -1,8 +1,28 @@
 version: '3'
 
 services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:8000"
   db:
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: djangoadmin
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
     restart: always
   server:
-    restart: always
+    build:
+      context: {conf.SERVER}
+      dockerfile: Dockerfile
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    image: {conf.PROJECT_NAME}_server
+    environment:
+      DB_USER: djangoadmin
+      DB_PASSWORD: password
     command: . /usr/src/app/start.sh
+    restart: always

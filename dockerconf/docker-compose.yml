@@ -2,7 +2,10 @@ version: '3'
 
 services:
   nginx:
-    image: nginx:latest
+    image: {conf.PROJECT_NAME}_nginx
+    build:
+      context: ./conf/nginx/
+      dockerfile: Dockerfile
     ports:
       - "80:8000"
   db:
