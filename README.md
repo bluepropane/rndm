@@ -1,12 +1,11 @@
 # RNDM: React-Nginx-Django-Mysql boilerplate
 Full-fledged Web 2.0 Single Page App boilerplate that is ready to be deployed as a containerized docker application
 
-- continuous development using mounted volumes in docker containers
-- production web server on [gunicorn](http://gunicorn.org/)
+- option of continuous development using mounted volumes in docker containers
+- production web server using [gunicorn](http://gunicorn.org/)
 - MySQL db (ready to deploy with docker-compose)
 - python 3.6/django 2.0
 - you define the project structure you want before the boilerplate is created, using a JSON config file (see `rndm_conf.json`)
-- `virtualenv` for development
 
 ## Introduction
 RNDM was built with the following objectives in mind:
@@ -16,7 +15,7 @@ RNDM was built with the following objectives in mind:
 ## Requirements
 RNDM has been tested on the following setup:
 - Docker ^18.03
-- docker-compose ^1.12.1
+- [docker-compose ^1.12.1](https://docs.docker.com/compose/install)
 
 The following are optional; having them would increase development efficiency
 - Python 3.6, pip 9.0.1
@@ -38,7 +37,7 @@ This section assumes you have docker-compose cli installed on your machine.
 ```
 docker-compose up
 ```
-Then, fire up your browser and navigate to [http://localhost](`http://localhost`).
+Then, fire up your browser and navigate to [http://localhost](http://localhost).
 By default, the nginx service binds the react dev server on port 3000 and the django dev server on port 8000.
 
 In the development environment, there should be 4 services running:
