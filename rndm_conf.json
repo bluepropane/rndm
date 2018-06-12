@@ -1,6 +1,6 @@
 {
 	"project_name": "myproject",
-	"apps": [{
+	"django_apps": [{
 		"name": "main"
 	}]
 }

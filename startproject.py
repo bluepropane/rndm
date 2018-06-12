@@ -71,7 +71,7 @@ exec gunicorn {self.config['project_name']}.wsgi:application \\
 
     def create_app_dirs(self):
         os.chdir(self.dir['server'])
-        for app in self.config['apps']:
+        for app in self.config['django_apps']:
             app_root = self.dir['server'] / app['name']
             if not app_root.exists():
                 system(f'python manage.py startapp {app["name"]}')
@@ -148,6 +148,6 @@ if __name__ == '__main__':
     # if len(sys.argv) < 2:
     #     print(f'Usage: python {sys.argv[0]} <target folder>')
     #     exit(1)
-    ps = ProjectStarter(sys.argv[1], rollback=False)
+    ps = ProjectStarter(rollback=False)
     ps.run()
     print ('\n' * 3, 'Success!', '\n' * 4)
