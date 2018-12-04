@@ -10,7 +10,7 @@ Full-fledged Web 2.0 Single Page App boilerplate that is ready to be deployed as
 ## Introduction
 RNDM was built with the following objectives in mind:
 - **Replicability & Portability**
-- **Rapid prototyping (hackathons, MVP, etc):** RNDM wires up the entire web stack from the start so that you/your development team can focus on building the API and web interface.
+- **Rapid prototyping:** RNDM wires up the entire web stack from the start so that you/your development team can focus on building the API and web interface.
 
 ## Requirements
 RNDM has been tested on the following setup:
