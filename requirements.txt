@@ -1,4 +1,4 @@
-Django==2.0.5
+Django==2.1.4
 django-dotenv==1.4.2
 django-webpack-loader==0.6.0
 gunicorn==19.8.1
