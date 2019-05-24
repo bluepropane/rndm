@@ -2,14 +2,17 @@ from pathlib import Path
 import sys
 import os
 import json
+import multiprocessing as mp
 
 
 def system(cmd):
     print('====>', cmd)
     return os.system(cmd)
 
+
 class FileFormatter(object):
     """docstring for FileFormatter"""
+
     def __init__(self, kv):
         super(FileFormatter, self).__init__()
         for k, v in kv.items():
@@ -18,6 +21,7 @@ class FileFormatter(object):
 
 class ProjectStarter(object):
     """docstring for ProjectStarter"""
+
     def __init__(self, target_path='src', rollback=True):
         super(ProjectStarter, self).__init__()
         self.dir = {'src': Path(target_path).absolute()}
@@ -31,11 +35,16 @@ class ProjectStarter(object):
 
     def _configure_dirs(self):
         self.dir['root'] = Path('.').absolute()
-        self.dir['server'] = (self.dir['src'] / self.config['project_name']).absolute()
+        self.dir['server'] = (
+            self.dir['src'] / f'server-{self.config['project_name']}').absolute()
+
         self.dir['conf'] = (self.dir['root'] / 'conf').absolute()
+        self.dir['nginx'] = (self.dir['conf'] / 'nginx').absolute()
         self.dir['dockerconf'] = (self.dir['root'] / 'dockerconf').absolute()
-        self.dir['web'] = (self.dir['src'] / f'web-{self.config["project_name"]}').absolute()
-        self.dir['boilerplate_cache'] = (self.dir['root'] / 'cached_boilerplates').absolute()
+        self.dir['web'] = (self.dir['src'] /
+                           f'web-{self.config["project_name"]}').absolute()
+        self.dir['boilerplate_cache'] = (
+            self.dir['root'] / 'cached_boilerplates').absolute()
 
     def create_urls_py(self, app_dir):
         content = """from django.urls import path
@@ -55,7 +64,7 @@ urlpatterns = [
         (templates_dir / app_dir.name).mkdir()
 
     def create_startup_scripts(self):
-        print('====> Creating docker scripts')
+        print('====> Creating container scripts')
         start_sh_content = f"""
 #!/bin/bash
 
@@ -78,19 +87,21 @@ exec gunicorn {self.config['project_name']}.wsgi:application \\
                 self.create_urls_py(app_root)
                 self.create_templates_dir(app_root)
             else:
-                print(f'App folder "{app_root.name}" already exists, skipping...')
+                print(
+                    f'App folder "{app_root.name}" already exists, skipping...')
 
-    def create_react_app(self, cached=True):
+    def create_react_app(self, cached=False):
         if not self.dir['web'].exists():
             self.dir['web'].mkdir()
         if cached:
-            print('Using cached react boilerplate') 
-            system(f'cp -a {self.dir["boilerplate_cache"] / "web"}/ {self.dir["web"]}/')
+            print('Using cached react boilerplate')
+            system(
+                f'cp -a {self.dir["boilerplate_cache"] / "web"}/ {self.dir["web"]}/')
             os.chdir(self.dir['web'])
             system(f'npm install')
         else:
             print('Building react boilerplate from create-react-app')
-            os.chdir(self.dir['conf'])
+            os.chdir(self.dir['dockerconf'])
             system('docker build -t node-cra -f create-react-dockerfile .')
             system(f'docker run --rm -t -v {self.dir["web"]}:/cra node-cra ')
             system(f'docker rmi node-cra')
@@ -98,7 +109,8 @@ exec gunicorn {self.config['project_name']}.wsgi:application \\
     def create_django_project(self):
         os.chdir(self.dir['src'])
         system(f'django-admin startproject {self.config["project_name"]}')
-        system(f'cp {self.dir["root"] / "requirements.txt"} {self.dir["server"]}')
+        system(
+            f'cp {self.dir["root"] / "requirements.txt"} {self.dir["server"]}')
         self.create_app_dirs()
 
     def eject_react_app(self):
@@ -106,11 +118,16 @@ exec gunicorn {self.config['project_name']}.wsgi:application \\
         system('npm run eject')
 
     def copy_docker_files(self):
-        system(f'cp {self.dir["dockerconf"] / "Dockerfile-web"} {self.dir["web"] / "Dockerfile"}')
-        system(f'cp {self.dir["dockerconf"] / "Dockerfile-server"} {self.dir["server"] / "Dockerfile"}')
+        system(
+            f'cp {self.dir["dockerconf"] / "Dockerfile-nginx"} {self.dir["nginx"] / "Dockerfile"}')
+        system(
+            f'cp {self.dir["dockerconf"] / "Dockerfile-web"} {self.dir["web"] / "Dockerfile"}')
+        system(
+            f'cp {self.dir["dockerconf"] / "Dockerfile-server"} {self.dir["server"] / "Dockerfile"}')
         for file_type in ('', '.override', '.production'):
             print(f'====> copying docker-compose{file_type}.yml')
-            compose_file = (self.dir['dockerconf'] / f'docker-compose{file_type}.yml')
+            compose_file = (self.dir['dockerconf'] /
+                            f'docker-compose{file_type}.yml')
             content = compose_file.open().read()
             context = FileFormatter({
                 'SERVER': f'./{self.dir["server"].relative_to(self.dir["src"])}',
@@ -129,25 +146,38 @@ exec gunicorn {self.config['project_name']}.wsgi:application \\
     def copy_confs(self):
         system(f'cp -a {self.dir["conf"]} {self.dir["src"]}')
 
-    def run(self):
-        try:
-            self.create_django_project()
-            self.create_startup_scripts()
-            self.create_react_app()
-            self.copy_docker_files()
-            self.copy_confs()
-            # self.eject_react_app()
-        except Exception:
-            print('Error occured!')
-            if self.should_rollback:
-                self.rollback()
-            raise
-        return
+
+def setup_server(ps):
+    ps.create_django_project()
+    ps.create_startup_scripts()
+
+
+def setup_web(ps):
+    ps.create_react_app()
+
 
 if __name__ == '__main__':
     # if len(sys.argv) < 2:
     #     print(f'Usage: python {sys.argv[0]} <target folder>')
     #     exit(1)
+    mp.set_start_method('fork')
     ps = ProjectStarter(rollback=False)
-    ps.run()
-    print ('\n' * 3, 'Success!', '\n' * 4)
+
+    try:
+        parallel = [
+            mp.Process(target=setup_server, args=(ps,)),
+            mp.Process(target=setup_web, args=(ps,))
+        ]
+        parallel[0].start()
+        parallel[1].start()
+        parallel[0].join()
+        parallel[1].join()
+        ps.copy_docker_files()
+        ps.copy_confs()
+        # ps.eject_react_app()
+    except Exception:
+        print('Error occured!')
+        if ps.should_rollback:
+            ps.rollback()
+        raise
+    print('\n' * 3, 'Success!', '\n' * 4)
